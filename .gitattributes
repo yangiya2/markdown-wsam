@@ -1,0 +1,31 @@
+* text=auto eol=lf
+*.{cmd,[cC][mM][dD]} text eol=crlf
+*.{bat,[bB][aA][tT]} text eol=crlf
+*.sln                text eol=crlf
+
+*.gif binary
+*.jpeg binary
+*.png binary
+*.gz binary
+
+
+# ビルドアーティファクトやバイナリファイルをGit LFSで管理する場合
+*.dll filter=lfs diff=lfs merge=lfs -text
+
+# テキストファイルの改行コードを自動変換しない
+*.cs      text eol=lf
+*.razor   text eol=lf
+*.html    text eol=lf
+*.css     text eol=lf
+*.js      text eol=lf
+*.json    text eol=lf
+*.md      text eol=lf
+
+# 画像ファイルなどのバイナリファイルをバイナリとして扱う
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.woff  binary
+*.woff2 binary
