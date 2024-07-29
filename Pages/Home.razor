@@ -1,7 +1,160 @@
 ﻿@page "/"
+@page "/{p01}/{p02}/{p03}/{p04}/{p05}/{p06}/{p07}/{p08}/{p09}/{p10}"
+@page "/{p01}/{p02}/{p03}/{p04}/{p05}/{p06}/{p07}/{p08}/{p09}"
+@page "/{p01}/{p02}/{p03}/{p04}/{p05}/{p06}/{p07}/{p08}"
+@page "/{p01}/{p02}/{p03}/{p04}/{p05}/{p06}/{p07}"
+@page "/{p01}/{p02}/{p03}/{p04}/{p05}/{p06}"
+@page "/{p01}/{p02}/{p03}/{p04}/{p05}"
+@page "/{p01}/{p02}/{p03}/{p04}"
+@page "/{p01}/{p02}/{p03}"
+@page "/{p01}/{p02}"
+@page "/{p01}"
+
 
 <PageTitle>Home</PageTitle>
 
+<div>p : @p</div>
+<div>path : @(path())</div>
+<div>path01をキャストした値 : @p01</div>
+<div>path02をキャストした値 : @p02</div>
+<div>path03をキャストした値 : @p03</div>
+<div>path04をキャストした値 : @p04</div>
+<div>path05をキャストした値 : @p05</div>
+<div>path06をキャストした値 : @p06</div>
+<div>path07をキャストした値 : @p07</div>
+<div>path08をキャストした値 : @p08</div>
+<div>path09をキャストした値 : @p09</div>
+<div>path09をキャストした値 : @p10</div>
+
+@inject NavigationManager navigationManager
+@* <base href="@(MyNavigationManager.Uri)" /> *@
+<div>MyNavigationManager.Uri=@(navigationManager.Uri)</div>
+<div>MyNavigationManager.BaseUri=@(navigationManager.BaseUri)</div>
 <h1>Hello, world!</h1>
 
+<a href="/a/b/dddd/dddd" class="nav-link">
+    /a/b/dddd/dddd
+
+</a>
+<NavLink class="nav-link" href="./zzzz" Match="NavLinkMatch.Prefix">
+    NavLinkMatch.Prefix  ./zzzz
+</NavLink>
+<NavLink class="nav-link" href="./zzzz" Match="NavLinkMatch.All">
+    NavLinkMatch.All  ./zzzz
+</NavLink>
+<NavLink class="nav-link" href="/weather">
+    /weather
+</NavLink>
+<a href="/weather" class="nav-link">
+    /weather / ari
+
+</a>
+<a href="./ccc" class="nav-link">
+    ./ccc
+
+</a>
+
+@(TextResult))
+<br />
+<hr />
+no
+<hr />
+
 Welcome to your new app.
+
+
+
+@code {
+
+    [SupplyParameterFromQuery]
+    [Parameter]
+    public string? p { get; set; }
+
+    [Parameter]
+    public string? p01 { get; set; }
+
+    [Parameter]
+    public string? p02 { get; set; }
+
+    [Parameter]
+    public string? p03 { get; set; }
+
+    [Parameter]
+    public string? p04 { get; set; }
+
+    [Parameter]
+    public string? p05 { get; set; }
+
+    [Parameter]
+    public string? p06 { get; set; }
+
+    [Parameter]
+    public string? p07 { get; set; }
+
+    [Parameter]
+    public string? p08 { get; set; }
+
+    [Parameter]
+    public string? p09 { get; set; }
+
+    [Parameter]
+    public string? p10 { get; set; }
+
+    [Parameter]
+    public string? p11 { get; set; }
+
+    [Parameter]
+    public string? TextResult { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // ここで Task を実行し、結果を TaskResult に格納する
+        TextResult = await TestMd();
+    }
+
+    private string pathNullable(string? value)
+    {
+        if (value == null)
+        {
+            return "";
+        }
+        else
+        {
+            return "/" + value;
+        }
+    }
+
+    // [Parameter]
+    public string path()
+    {
+        string path = pathNullable(p01) //
+                + pathNullable(p02) //
+                + pathNullable(p03) //
+                + pathNullable(p04) //
+                + pathNullable(p05) //
+                + pathNullable(p06) //
+                + pathNullable(p07) //
+                + pathNullable(p08) //
+                + pathNullable(p09) //
+                + pathNullable(p10) //
+                + pathNullable(p11) //
+                ;
+        return path;
+    }
+
+    private async Task<string> TestMd()
+    {
+        string? resString = await HttpUtils.GetAsync(navigationManager.BaseUri, "/doc/test/test.md");
+        // string? resString = await HttpUtils.GetAsync("/doc/test/", "test.md");
+        // string? resString = await HttpUtils.GetAsync("http://127.0.0.1/doc/test/", "test.md");
+        return StringExtensions.OrStr(resString, "null");
+    }
+
+
+    private string foo()
+    {
+        string path = "<a href = \"/foo/a/b/dddd/dddd\" class=\"nav-link\">    /foo/a/b/dddd/dddd</a>";
+        return path;
+    }
+
+}

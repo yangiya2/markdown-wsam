@@ -6,12 +6,9 @@ namespace markdown_wsam
 {
     public static class StringExtensions
     {
-        public static string OrStr(this string str, string orValue = "")
+        public static string OrStr(this string? str, string orValue = "")
         {
-            if (str.Length == 0 || str.Trim().Length == 0)
-            {
-                return orValue;
-            }
+            if (str == null || str.Length == 0 || str.Trim().Length == 0) return orValue;
             return str;
         }
     }

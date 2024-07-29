@@ -1,5 +1,6 @@
-﻿@page "/{p01}/{p02}/{p03}/{p04}/{p05}/{p06}/{p07}/{p08}/{p09}/{p10}"
-@page "/{p01}/{p02}/{p03}/{p04}/{p05}/{p06}/{p07}/{p08}/{p09}"
+﻿@page "/{p01}/{p02}/{p03}/{p04}/{p05}/{p06}/{p07}/{p08}/{p09}/{p10}/{p11}"
+
+@* @page "/{p01}/{p02}/{p03}/{p04}/{p05}/{p06}/{p07}/{p08}/{p09}"
 @page "/{p01}/{p02}/{p03}/{p04}/{p05}/{p06}/{p07}/{p08}"
 @page "/{p01}/{p02}/{p03}/{p04}/{p05}/{p06}/{p07}"
 @page "/{p01}/{p02}/{p03}/{p04}/{p05}/{p06}"
@@ -8,7 +9,7 @@
 @page "/{p01}/{p02}/{p03}"
 @page "/{p01}/{p02}"
 @page "/{p01}"
-
+ *@
 <PageTitle>Path 1番目</PageTitle>
 
 <h1>Path 003番目</h1>
@@ -59,6 +60,9 @@
     [Parameter]
     public string? p10 { get; set; }
 
+    [Parameter]
+    public string? p11 { get; set; }
+
 
     private string pathNullable(string? value)
     {
@@ -85,6 +89,7 @@
                 + pathNullable(p08) //
                 + pathNullable(p09) //
                 + pathNullable(p10) //
+                + pathNullable(p11) //
                 ;
         return path;
     }
