@@ -1,15 +1,14 @@
 ﻿@page "/"
-@page "/{p01}/{p02}/{p03}/{p04}/{p05}/{p06}/{p07}/{p08}/{p09}/{p10}"
-@page "/{p01}/{p02}/{p03}/{p04}/{p05}/{p06}/{p07}/{p08}/{p09}"
-@page "/{p01}/{p02}/{p03}/{p04}/{p05}/{p06}/{p07}/{p08}"
-@page "/{p01}/{p02}/{p03}/{p04}/{p05}/{p06}/{p07}"
-@page "/{p01}/{p02}/{p03}/{p04}/{p05}/{p06}"
-@page "/{p01}/{p02}/{p03}/{p04}/{p05}"
-@page "/{p01}/{p02}/{p03}/{p04}"
-@page "/{p01}/{p02}/{p03}"
-@page "/{p01}/{p02}"
-@page "/{p01}"
-
+@page "/doc/{p01}/{p02}/{p03}/{p04}/{p05}/{p06}/{p07}/{p08}/{p09}/{p10}"
+@page "/doc/{p01}/{p02}/{p03}/{p04}/{p05}/{p06}/{p07}/{p08}/{p09}"
+@page "/doc/{p01}/{p02}/{p03}/{p04}/{p05}/{p06}/{p07}/{p08}"
+@page "/doc/{p01}/{p02}/{p03}/{p04}/{p05}/{p06}/{p07}"
+@page "/doc/{p01}/{p02}/{p03}/{p04}/{p05}/{p06}"
+@page "/doc/{p01}/{p02}/{p03}/{p04}/{p05}"
+@page "/doc/{p01}/{p02}/{p03}/{p04}"
+@page "/doc/{p01}/{p02}/{p03}"
+@page "/doc/{p01}/{p02}"
+@page "/doc/{p01}"
 
 <PageTitle>Home</PageTitle>
 
@@ -27,6 +26,8 @@
 <div>path09をキャストした値 : @p10</div>
 
 @inject NavigationManager navigationManager
+@using Utils;
+
 @* <base href="@(MyNavigationManager.Uri)" /> *@
 <div>MyNavigationManager.Uri=@(navigationManager.Uri)</div>
 <div>MyNavigationManager.BaseUri=@(navigationManager.BaseUri)</div>
@@ -45,6 +46,9 @@
 <NavLink class="nav-link" href="/weather">
     /weather
 </NavLink>
+<NavLink class="nav-link" href="/doc/test/test.md">
+    /doc/test/test.md
+</NavLink>
 <a href="/weather" class="nav-link">
     /weather / ari
 
@@ -54,7 +58,7 @@
 
 </a>
 
-@(TextResult))
+@(TextResult)
 <br />
 <hr />
 no
@@ -62,9 +66,19 @@ no
 
 Welcome to your new app.
 
+<hr />
+************************************
+<hr />
+
+@(mdHTML)
+
+
 
 
 @code {
+
+
+
 
     [SupplyParameterFromQuery]
     [Parameter]
@@ -106,10 +120,42 @@ Welcome to your new app.
     [Parameter]
     public string? TextResult { get; set; }
 
+    [Parameter]
+    public string? mdHTML { get; set; }
+
+
+
+    private string AbsoluteUri()
+    {
+        return navigationManager.ToAbsoluteUri(navigationManager.Uri).ToString();
+    }
+
+    private bool UriEndWithSlash()
+    {
+        var path = AbsoluteUri();
+        if (path.EndsWith("/")) return true;
+        return false;
+    }
+
+
+
+
     protected override async Task OnInitializedAsync()
     {
         // ここで Task を実行し、結果を TaskResult に格納する
-        TextResult = await TestMd();
+        // TextResult = await TestMd();
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (p01 == null || p01.Length == 0 || p01.Trim().Length == 0)
+        {
+            // markdown の読み取りをしない
+        }
+        else
+        {
+            MarkdownHtml(AbsoluteUri());
+        };
     }
 
     private string pathNullable(string? value)
@@ -127,7 +173,8 @@ Welcome to your new app.
     // [Parameter]
     public string path()
     {
-        string path = pathNullable(p01) //
+        string path =
+                pathNullable(p01) //
                 + pathNullable(p02) //
                 + pathNullable(p03) //
                 + pathNullable(p04) //
@@ -144,17 +191,26 @@ Welcome to your new app.
 
     private async Task<string> TestMd()
     {
-        string? resString = await HttpUtils.GetAsync(navigationManager.BaseUri, "/doc/test/test.md");
+        // string? resString = await Utils.HttpUtils.GetAsync(navigationManager.BaseUri, "doc/test/test.md");
+        string? resString = await Utils.HttpUtils.GetAsync(navigationManager.BaseUri + "doc", path());
         // string? resString = await HttpUtils.GetAsync("/doc/test/", "test.md");
         // string? resString = await HttpUtils.GetAsync("http://127.0.0.1/doc/test/", "test.md");
-        return StringExtensions.OrStr(resString, "null");
+        // Utils.StringExtensions2OrStr(resString, "null");
+        return Utils.StringExtensions.OrStr(resString, "null");
     }
 
-
-    private string foo()
+    private async void MarkdownHtml(string path)
     {
-        string path = "<a href = \"/foo/a/b/dddd/dddd\" class=\"nav-link\">    /foo/a/b/dddd/dddd</a>";
-        return path;
+        HttpResponseMessage res = await HttpUtils.GetHttpResponseAsync(path);
+        if (res.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            mdHTML = "@@@path="+ path+"@@@" + await res.Content.ReadAsStringAsync();
+        }
+        else
+        {
+            mdHTML = "!!! " + "HTTP STATUS CODE IS " + res.StatusCode;
+        }
+        StateHasChanged();
     }
 
 }
