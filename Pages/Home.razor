@@ -70,8 +70,7 @@ Welcome to your new app.
 ************************************
 <hr />
 
-@(mdHTML)
-
+@((MarkupString)mdHTML)
 
 
 
@@ -204,7 +203,8 @@ Welcome to your new app.
         HttpResponseMessage res = await HttpUtils.GetHttpResponseAsync(path);
         if (res.StatusCode == System.Net.HttpStatusCode.OK)
         {
-            mdHTML = "@@@path="+ path+"@@@" + await res.Content.ReadAsStringAsync();
+            var html = MarkdownUtils.ToHtml(await res.Content.ReadAsStringAsync());
+            mdHTML = "@@@path=" + path + "@@@" + html;
         }
         else
         {

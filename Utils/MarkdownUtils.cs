@@ -1,15 +1,16 @@
 ﻿namespace Utils
 {
+    using Markdig;
     /// <summary>
-    /// string 型に対する拡張メソッド
+    /// Markdown に関するユーティリティー
     /// </summary>
-    public static class PathUtils22222
+    public static class MarkdownUtils
     {
-        public static string FileExtension2222(this string? str)
+        public static string ToHtml(this string str)
         {
-            if (str == null || str.Length == 0 || str.Trim().Length == 0) return "";
-            string fileExtension = Path.GetExtension(str);
-            return fileExtension;
+            var markdownPipeline = new MarkdownPipelineBuilder().UsePipeTables().Build();
+            string htmlContents = Markdown.ToHtml(str, markdownPipeline);
+            return htmlContents;
         }
     }
 }
