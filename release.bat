@@ -7,15 +7,10 @@ cd %SCRIPT_DIR%
 
 @echo.
 @echo ************************************
-dotnet publish -c Release
+rmdir /S/Q %DIST_DIR%
+dotnet publish -c Release markdown-wsam.sln -o %DIST_DIR%\markdown-wsam
 @echo ************************************
 @echo.
-
-cd %SCRIPT_DIR%
-rmdir /S/Q %DIST_DIR%
-mkdir %DIST_DIR%\%PRJ_NAME%
-
-xcopy /S/F %SCRIPT_DIR%\bin\Release\net8.0\publish\wwwroot\*  %DIST_DIR%\%PRJ_NAME%\
 
 cd %DIST_DIR%
 @echo.

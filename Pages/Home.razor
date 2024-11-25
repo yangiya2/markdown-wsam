@@ -1,15 +1,4 @@
 ﻿@page "/"
-@page "/{p01}/{p02}/{p03}/{p04}/{p05}/{p06}/{p07}/{p08}/{p09}/{p10}"
-@page "/{p01}/{p02}/{p03}/{p04}/{p05}/{p06}/{p07}/{p08}/{p09}"
-@page "/{p01}/{p02}/{p03}/{p04}/{p05}/{p06}/{p07}/{p08}"
-@page "/{p01}/{p02}/{p03}/{p04}/{p05}/{p06}/{p07}"
-@page "/{p01}/{p02}/{p03}/{p04}/{p05}/{p06}"
-@page "/{p01}/{p02}/{p03}/{p04}/{p05}"
-@page "/{p01}/{p02}/{p03}/{p04}"
-@page "/{p01}/{p02}/{p03}"
-@page "/{p01}/{p02}"
-@page "/{p01}"
-
 @using Utils;
 @using Microsoft.AspNetCore.Components.WebAssembly.Hosting
 @inject NavigationManager navigationManager
@@ -17,54 +6,22 @@
 
 @if (Env.IsDevelopment())
 {
-    <div style="color: red;">
-        <strong>デバッグモード: 開発環境です</strong>
-    </div>
-
-    <div>p : @p</div>
-    <div>path : @(path())</div>
-    <table border="1">
-        <tr>
-            <th style="border:1px solid #000;">p01</th>
-            <th style="border:1px solid #000;">p02</th>
-            <th style="border:1px solid #000;">p03</th>
-            <th style="border:1px solid #000;">p04</th>
-            <th style="border:1px solid #000;">p05</th>
-            <th style="border:1px solid #000;">p06</th>
-            <th style="border:1px solid #000;">p07</th>
-            <th style="border:1px solid #000;">p08</th>
-            <th style="border:1px solid #000;">p09</th>
-            <th style="border:1px solid #000;">p10</th>
-        </tr>
-        <tr>
-            <td style="border:1px solid #000;">@p01&nbsp;</td>
-            <td style="border:1px solid #000;">@p02</td>
-            <td style="border:1px solid #000;">@p03</td>
-            <td style="border:1px solid #000;">@p04</td>
-            <td style="border:1px solid #000;">@p05</td>
-            <td style="border:1px solid #000;">@p06</td>
-            <td style="border:1px solid #000;">@p07</td>
-            <td style="border:1px solid #000;">@p08</td>
-            <td style="border:1px solid #000;">@p09</td>
-            <td style="border:1px solid #000;">@p10</td>
-        </tr>
-    </table>
-
+    <!--
     <div>MyNavigationManager.Uri=@(navigationManager.Uri)</div>
     <div>MyNavigationManager.BaseUri=@(navigationManager.BaseUri)</div>
-    <div>*** markdown path = @(markdownDebugMessage) ***</div>
+    -->
 
-    <NavLink class="nav-link" href="/test/test.md">
-        /test/test.md
+    <NavLink class="nav-link" href="./docs/test/test.md">
+        ./docs/test/test.md
     </NavLink>
-    <NavLink class="nav-link" href="/test/test2.md">
-        /test/test2.md
+    <NavLink class="nav-link" href="./docs/test/test2.md">
+        ./docs/test/test2.md
     </NavLink>
-    <NavLink class="nav-link" href="/test/test3.md">
-        /test/test3.md
+    <NavLink class="nav-link" href="./docs/test/test3.md">
+        ./docs/test/test3.md
     </NavLink>
-    <NavLink class="nav-link" href="/test/test3.md#h6">
-        /test/test3.md#h6
+    <NavLink class="nav-link" href="./docs/test/test3.md#h6">
+        ./docs/test/test3.md#h6
     </NavLink>
 
     <hr />
@@ -75,148 +32,8 @@
     </div>
     <hr />
 }
+<a href="./docs/">docs</a>
+<br />
+<a href="./mdfiles/index.md">mdfiles/index.md</a>
+<br />
 
-@((MarkupString)mdHTML)
-
-
-@code {
-
-    [SupplyParameterFromQuery]
-    [Parameter]
-    public string? p { get; set; }
-
-    [Parameter]
-    public string? p01 { get; set; }
-
-    [Parameter]
-    public string? p02 { get; set; }
-
-    [Parameter]
-    public string? p03 { get; set; }
-
-    [Parameter]
-    public string? p04 { get; set; }
-
-    [Parameter]
-    public string? p05 { get; set; }
-
-    [Parameter]
-    public string? p06 { get; set; }
-
-    [Parameter]
-    public string? p07 { get; set; }
-
-    [Parameter]
-    public string? p08 { get; set; }
-
-    [Parameter]
-    public string? p09 { get; set; }
-
-    [Parameter]
-    public string? p10 { get; set; }
-
-    [Parameter]
-    public string? mdHTML { get; set; }
-
-    [Parameter]
-    public string? markdownDebugMessage { get; set; }
-
-
-
-    /// <summary>
-    /// Markdown を格納するディレクトリを返却します
-    /// </summary>
-    /// <returns>Markdown を格納するディレクトリ</returns>
-    public string MarkdownFilesDirectory() { return "mdfiles/"; }
-
-    private string AbsoluteUri()
-    {
-        return navigationManager.ToAbsoluteUri(navigationManager.Uri).ToString();
-    }
-
-    private string MarkdownPathBase(string url)
-    {
-        var basePath = navigationManager.BaseUri;
-        var requestPathBase = basePath;
-        var markdownPathBase = basePath + MarkdownFilesDirectory();
-        return url.Replace(requestPathBase, markdownPathBase);
-    }
-
-
-    protected override async Task OnInitializedAsync()
-    {
-        //初期ロード時に実行したいものはここで
-        mdHTML = "";
-    }
-
-    protected override void OnParametersSet()
-    {
-        if (p01 == null || p01.Length == 0 || p01.Trim().Length == 0)
-        {
-            MarkdownHtml(MarkdownPathBase(AbsoluteUri() + "index.md"));
-        }
-        else
-        {
-
-            MarkdownHtml(MarkdownPathBase(AbsoluteUri()));
-        };
-        navigationManager.NavigateTo(AbsoluteUri(),false);
-    }
-
-    private string pathNullable(string? value)
-    {
-        if (value == null)
-        {
-            return "";
-        }
-        else
-        {
-            return "/" + value;
-        }
-    }
-
-    // [Parameter]
-    public string path()
-    {
-        string path =
-                pathNullable(p01) //
-                + pathNullable(p02) //
-                + pathNullable(p03) //
-                + pathNullable(p04) //
-                + pathNullable(p05) //
-                + pathNullable(p06) //
-                + pathNullable(p07) //
-                + pathNullable(p08) //
-                + pathNullable(p09) //
-                + pathNullable(p10) //
-                ;
-        return path;
-    }
-
-    // private async Task<string> TestMd()
-    // {
-    //     // string? resString = await Utils.HttpUtils.GetAsync(navigationManager.BaseUri, "doc/test/test.md");
-    //     string? resString = await Utils.HttpUtils.GetAsync(navigationManager.BaseUri + "doc", path());
-    //     // string? resString = await HttpUtils.GetAsync("/doc/test/", "test.md");
-    //     // string? resString = await HttpUtils.GetAsync("http://127.0.0.1/doc/test/", "test.md");
-    //     // Utils.StringExtensions2OrStr(resString, "null");
-    //     return Utils.StringExtensions.OrStr(resString, "null");
-    // }
-
-    private async void MarkdownHtml(string path)
-    {
-        HttpResponseMessage res = await HttpUtils.GetHttpResponseAsync(path);
-        markdownDebugMessage = "@@@path=" + path + "@@@";
-        if (res.StatusCode == System.Net.HttpStatusCode.OK)
-        {
-            var html = MarkdownUtils.ToHtml(await res.Content.ReadAsStringAsync());
-            mdHTML = html;
-        }
-        else
-        {
-            mdHTML = "HTTP STATUS CODE IS " + res.StatusCode + "!!!";
-        }
-        StateHasChanged();
-    }
-
-}
