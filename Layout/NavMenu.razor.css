@@ -67,12 +67,13 @@
 
 @media (min-width: 641px) {
     .navbar-toggler {
-        display: none;
+        display: inline-block;
     }
 
     .collapse {
         /* Never collapse the sidebar for wide screens */
         display: block;
+        width: 10;
     }
     
     .nav-scrollable {

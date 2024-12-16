@@ -1,4 +1,11 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@inject NavigationManager navigationManager
+@* @inject IHttpClientFactory HttpClientFactory  *@
+@using Utils;
+@using System
+@using Microsoft.Extensions.Logging;
+@inject ILogger<NavMenu> Logger
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">markdown-wsam</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -9,36 +16,67 @@
 
 <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
     <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-@*         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/a/b/c">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> a/b/c
-            </NavLink>
-        </div>
- *@    </nav>
+        @if (MenuItems != null)
+        { @foreach (var item in MenuItems)
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="@item.Url" Match="NavLinkMatch.All">
+                        ・ @item.Name
+                    </NavLink>
+                </div>
+          }
+        }
+
+    </nav>
 </div>
+
+
+
 
 @code {
     private bool collapseNavMenu = true;
-
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+
+    /****************************************************/
+
+    private List<NavItem> MenuItems;
+    protected override async Task OnInitializedAsync()
+    {
+        var navlinkPath = "/data/navlink.tsv";
+        var baseUri = navigationManager.BaseUri;
+        HttpResponseMessage res = await HttpUtils.GetHttpResponseAsync(baseUri, navlinkPath);
+        var tsvData = await res.Content.ReadAsStringAsync();
+        if (res.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            tsvData = await res.Content.ReadAsStringAsync();
+        }
+        else
+        {
+            Logger.LogError("HTTP STATUS CODE IS " + res.StatusCode + "!!!  path=" + baseUri + navlinkPath);
+            tsvData = "";
+        }
+        MenuItems = ParseTsv(tsvData);
+    }
+
+    private List<NavItem> ParseTsv(string tsvContent)
+    {
+        var navItems = new List<NavItem>();
+        var lines = tsvContent.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+        foreach (var line in lines.Skip(1))
+        {
+            var parts = line.Split('\t');
+            navItems.Add(new NavItem { Name = parts[0], Url = parts[1] });
+        }
+        return navItems;
+    }
+
+    public class NavItem
+    {
+        public string Name { get; set; }
+        public string Url { get; set; }
     }
 }

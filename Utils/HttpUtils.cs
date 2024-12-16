@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Net.Http;
 
 namespace Utils
 {
@@ -25,9 +26,30 @@ namespace Utils
         {
             using (var client = new HttpClient())
             {
-                return await client.GetAsync(url);
+
+                // リクエストヘッダーにキャッシュ制御を追加
+                var request = new HttpRequestMessage(HttpMethod.Get, url);
+                //request.Headers.CacheControl = new System.Net.Http.Headers.CacheControlHeaderValue
+                //{
+                //    MaxAge = TimeSpan.FromSeconds(60), // 60秒間キャッシュ
+                //    MustRevalidate = true, // キャッシュが古くなった場合に再検証を強制
+                //    //NoCache = true,
+                //    //NoStore = true,
+                //    //MustRevalidate = true
+                //};
+                var response = await client.SendAsync(request);
+                return response;
+
+                //return await client.GetAsync(url);
             }
         }
+
+
+
+
+
+
+
 
         /// <summary>
         /// HTTP GET コールした結果を取得する

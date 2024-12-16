@@ -101,3 +101,29 @@ a, .btn-link {
 code {
     color: #c02d76;
 }
+
+/*******/
+
+.navbar-collapse-horizontal {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    transition: max-width 0.5s ease;
+}
+
+.navbar-collapse-horizontal.collapse {
+        max-width: 0;
+    }
+
+.navbar-nav {
+    display: flex;
+    flex-direction: row;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-item {
+    margin-right: 15px;
+}
